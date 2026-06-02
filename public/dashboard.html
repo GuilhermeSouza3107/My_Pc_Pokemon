@@ -1,0 +1,537 @@
+```html
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Pokémon PC System</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
+    <link
+        rel="stylesheet"
+        href="css/style.css">
+
+</head>
+
+<body>
+
+<div class="background-overlay"></div>
+
+<!-- NAVBAR -->
+
+<nav class="navbar pokemon-navbar shadow-lg">
+
+    <div class="container">
+
+        <span class="navbar-brand fw-bold fs-2 text-warning">
+
+            Pokémon PC System
+
+        </span>
+
+        <button
+            class="btn btn-light"
+            onclick="logout()">
+
+            Sair
+
+        </button>
+
+    </div>
+
+</nav>
+
+<div class="container py-5">
+
+    <div class="team-container mb-5">
+
+        <h2 class="text-center text-warning mb-4">
+
+            Equipe Principal
+
+        </h2>
+
+        <div
+            id="timePokemon"
+            class="d-flex justify-content-center flex-wrap gap-4">
+
+        </div>
+
+    </div>
+
+    <div class="pokemon-form mb-5">
+
+        <h2 class="text-center text-warning mb-4">
+
+            Capturar Pokémon
+
+        </h2>
+
+        <form id="pokemonForm">
+
+            <div class="row">
+
+                <div class="col-md-4 mb-3">
+
+                    <input
+                        type="text"
+                        id="nome"
+                        class="form-control pokemon-input"
+                        placeholder="Nome do Pokémon"
+                        required>
+
+                </div>
+
+                <div class="col-md-4 mb-3">
+
+                    <input
+                        type="text"
+                        id="tipo"
+                        class="form-control pokemon-input"
+                        placeholder="Tipo"
+                        required>
+
+                </div>
+
+                <div class="col-md-4 mb-3">
+
+                    <input
+                        type="number"
+                        id="level"
+                        class="form-control pokemon-input"
+                        placeholder="Level"
+                        required>
+
+                </div>
+
+            </div>
+
+            <div class="row">
+
+                <div class="col-md-2 mb-3">
+
+                    <input
+                        type="number"
+                        id="hp"
+                        class="form-control pokemon-input"
+                        placeholder="HP">
+
+                </div>
+
+                <div class="col-md-2 mb-3">
+
+                    <input
+                        type="number"
+                        id="atk"
+                        class="form-control pokemon-input"
+                        placeholder="ATK">
+
+                </div>
+
+                <div class="col-md-2 mb-3">
+
+                    <input
+                        type="number"
+                        id="def"
+                        class="form-control pokemon-input"
+                        placeholder="DEF">
+
+                </div>
+
+                <div class="col-md-2 mb-3">
+
+                    <input
+                        type="number"
+                        id="sp_atk"
+                        class="form-control pokemon-input"
+                        placeholder="SP ATK">
+
+                </div>
+
+                <div class="col-md-2 mb-3">
+
+                    <input
+                        type="number"
+                        id="sp_def"
+                        class="form-control pokemon-input"
+                        placeholder="SP DEF">
+
+                </div>
+
+                <div class="col-md-2 mb-3">
+
+                    <input
+                        type="number"
+                        id="speed"
+                        class="form-control pokemon-input"
+                        placeholder="SPEED">
+
+                </div>
+
+            </div>
+
+            <button class="btn pokemon-btn w-100">
+
+                Salvar Pokémon
+
+            </button>
+
+        </form>
+
+    </div>
+
+    <div
+        class="row"
+        id="listaPokemons">
+
+    </div>
+
+</div>
+
+<script>
+
+const API = 'http://localhost:3000/api';
+
+let equipe = [];
+
+/* =========================
+   CARREGAR POKÉMONS
+========================= */
+
+async function carregarPokemons() {
+
+    const token =
+    localStorage.getItem('token');
+
+    const resposta = await fetch(API, {
+
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+
+    });
+
+    const pokemons = await resposta.json();
+
+    const lista =
+    document.getElementById('listaPokemons');
+
+    lista.innerHTML = '';
+
+    for (const pokemon of pokemons) {
+
+        const nomePokemon = pokemon.nome
+        .toLowerCase()
+        .trim()
+        .replaceAll(' ', '-')
+        .replaceAll('.', '')
+        .replaceAll("'", '');
+
+        let imagem =
+        'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png';
+
+        try {
+
+            const respostaPokemon =
+            await fetch(
+                `https://pokeapi.co/api/v2/pokemon/${nomePokemon}`
+            );
+
+            const dadosPokemon =
+            await respostaPokemon.json();
+
+            imagem =
+            dadosPokemon.sprites.other['official-artwork'].front_default;
+
+        } catch (erro) {
+
+            console.log('Imagem não encontrada');
+
+        }
+
+        lista.innerHTML += `
+
+        <div class="col-lg-4 col-md-6 mb-4">
+
+            <div class="pokemon-card">
+
+                <div class="pokemon-header">
+
+                    <img
+                        src="${imagem}"
+                        class="pokemon-image">
+
+                </div>
+
+                <div class="pokemon-body">
+
+                    <h2 class="pokemon-name text-capitalize">
+
+                        ${pokemon.nome}
+
+                    </h2>
+
+                    <div class="pokemon-info">
+
+                        <span>
+
+                            Tipo: ${pokemon.tipo}
+
+                        </span>
+
+                        <span>
+
+                            Lv ${pokemon.level_pokemon}
+
+                        </span>
+
+                    </div>
+
+                    <div class="stats-grid mt-3">
+
+                        <div>HP: ${pokemon.hp}</div>
+                        <div>ATK: ${pokemon.atk}</div>
+                        <div>DEF: ${pokemon.def}</div>
+                        <div>SPA: ${pokemon.sp_atk}</div>
+                        <div>SPD: ${pokemon.sp_def}</div>
+                        <div>VEL: ${pokemon.speed}</div>
+
+                    </div>
+
+                    <div class="text-center mt-3">
+
+                        <span class="power-badge">
+
+                            TOTAL ${pokemon.poder_total}
+
+                        </span>
+
+                    </div>
+
+                    <div class="d-grid gap-2 mt-4">
+
+                        <button
+                            class="btn pokemon-team-btn"
+                            onclick='adicionarTime(
+                                "${pokemon.nome}",
+                                "${imagem}"
+                            )'>
+
+                            Adicionar ao Time
+
+                        </button>
+
+                        <button
+                            class="btn btn-danger"
+                            onclick="deletarPokemon(${pokemon.id})">
+
+                            Remover
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        `;
+
+    }
+
+}
+
+document
+.getElementById('pokemonForm')
+.addEventListener('submit', async (e) => {
+
+    e.preventDefault();
+
+    const token =
+    localStorage.getItem('token');
+
+    const body = {
+
+        id_box: 1,
+
+        nome:
+        document.getElementById('nome').value,
+
+        tipo:
+        document.getElementById('tipo').value,
+
+        level_pokemon:
+        document.getElementById('level').value,
+
+        hp:
+        Number(document.getElementById('hp').value),
+
+        atk:
+        Number(document.getElementById('atk').value),
+
+        def:
+        Number(document.getElementById('def').value),
+
+        sp_atk:
+        Number(document.getElementById('sp_atk').value),
+
+        sp_def:
+        Number(document.getElementById('sp_def').value),
+
+        speed:
+        Number(document.getElementById('speed').value)
+
+    };
+
+    await fetch(API, {
+
+        method: 'POST',
+
+        headers: {
+
+            'Content-Type': 'application/json',
+
+            Authorization: `Bearer ${token}`
+
+        },
+
+        body: JSON.stringify(body)
+
+    });
+
+    carregarPokemons();
+
+    document
+    .getElementById('pokemonForm')
+    .reset();
+
+});
+
+async function deletarPokemon(id) {
+
+    const token =
+    localStorage.getItem('token');
+
+    await fetch(`${API}/${id}`, {
+
+        method: 'DELETE',
+
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+
+    });
+
+    carregarPokemons();
+
+}
+
+
+function adicionarTime(nome, imagem) {
+
+    if (equipe.length >= 6) {
+
+        alert('Sua equipe já possui 6 Pokémon');
+
+        return;
+
+    }
+
+    const existe = equipe.find(
+        p => p.nome === nome
+    );
+
+    if (existe) {
+
+        alert('Pokémon já está na equipe');
+
+        return;
+
+    }
+
+    equipe.push({
+        nome,
+        imagem
+    });
+
+    renderizarEquipe();
+
+}
+
+function removerDoTime(nome) {
+
+    equipe = equipe.filter(
+        p => p.nome !== nome
+    );
+
+    renderizarEquipe();
+
+}
+
+function renderizarEquipe() {
+
+    const div =
+    document.getElementById('timePokemon');
+
+    div.innerHTML = '';
+
+    equipe.forEach(pokemon => {
+
+        div.innerHTML += `
+
+        <div class="team-slot text-center">
+
+            <img
+                src="${pokemon.imagem}"
+                class="team-image">
+
+            <p class="mt-2 fw-bold">
+
+                ${pokemon.nome}
+
+            </p>
+
+            <button
+                class="btn btn-sm btn-danger"
+                onclick="removerDoTime('${pokemon.nome}')">
+
+                Remover
+
+            </button>
+
+        </div>
+
+        `;
+
+    });
+
+}
+
+function logout() {
+
+    localStorage.removeItem('token');
+
+    window.location.href =
+    'login.html';
+
+}
+
+carregarPokemons();
+
+</script>
+
+</body>
+
+</html>
+```

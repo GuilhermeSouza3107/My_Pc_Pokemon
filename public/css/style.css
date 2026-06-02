@@ -1,0 +1,118 @@
+body {
+
+    background:
+    linear-gradient(    
+        10deg,
+        #190ab8,
+        #9c0101
+    );
+
+    color: white;
+
+    min-height: 100vh;
+
+    overflow-x: hidden;
+}
+
+.navbar {
+
+    background-color: #ff0000 !important;
+}
+
+.card {
+
+    background:
+    rgba(255, 255, 255, 0.08);
+
+    backdrop-filter: blur(10px);
+
+    border: none;
+
+    border-radius: 20px;
+
+    color: white;
+}
+
+.form-control {
+
+    background:
+    rgba(255,255,255,0.1);
+
+    border:
+    1px solid #ef4444;
+
+    color: white;
+}
+
+.form-control:focus {
+
+    background:
+    rgb(255, 255, 255);
+
+    border-color: #26ff00;
+
+    box-shadow:
+    0 0 10px #f87171;
+
+    color: rgba(0, 0, 0, 0.319);
+}
+
+.btn-danger {
+
+    background-color: #dc2626;
+
+    border: none;
+}
+
+.btn-danger:hover {
+
+    background-color: #b91c1c;
+}
+
+.pokemon-card {
+
+    transition: 0.3s;
+}
+
+.pokemon-card:hover {
+
+    transform: scale(1.03);
+}
+
+.pokemon-mini {
+
+    width: 100px;
+}
+
+.time-slot {
+
+    background:
+    rgba(248, 248, 248, 0.39);
+
+    padding: 15px;
+
+    border-radius: 15px;
+
+    width: 120px;
+
+    transition: 0.3s;
+}
+
+.time-slot:hover {
+
+    transform: scale(1.05);
+}
+
+.time-image {
+
+    width: 80px;
+}
+
+.pokemon-mini {
+
+    width: 60px;
+
+    height: 60px;
+
+    object-fit: contain;
+}
